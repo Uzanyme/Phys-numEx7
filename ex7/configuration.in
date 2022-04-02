@@ -1,0 +1,42 @@
+% Physique:
+Lx=8
+Ly=5
+
+% Boundary conditions: Forcing, Dirichlet, Exit, Neumann
+BoundaryL=Forcing
+BoundaryR=Neumann
+BoundaryU=Neumann
+BoundaryD=Neumann
+
+InitialCondition=Zero % Zero, FinitStatic, FinitRight, FinitLeft, Eigenmode
+f0=1
+xa=3.2
+xb=4.8
+ya=1.7
+yb=3.3
+eigenmodeAmplitude=1
+eigenmodeM=2
+eigenmodeN=3
+
+% Forcing perturbation parameters
+A=1
+omega=6
+
+% Wave propagation speed u: Const, Case1, Case2
+PropagationFunction=Const
+u0=3
+g=9.81
+h0=1000
+h1=15
+a=1000
+b=5800
+
+% Numérique:
+Nx=100
+Ny=3
+endTime=3                   % [s] The final simulation time to reach
+betaCFL=1
+output=sim/output.#.out     % '#' will be replaced by the frame number
+
+% Set to 0 to reduce printouts
+verbose=1 
