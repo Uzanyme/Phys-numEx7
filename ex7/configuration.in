@@ -34,7 +34,7 @@ b=5800
 % Numérique:
 Nx=100
 Ny=3
-endTime=3                   % [s] The final simulation time to reach
+endTime=16.0/3.0                   % [s] The final simulation time to reach
 betaCFL=1
 output=sim/output.#.out     % '#' will be replaced by the frame number
 

@@ -276,31 +276,33 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
 	///fonction probablement améliorable.
     // TODO: Implement boundary conditions.
     
-    ///bord gauche
+    ///bord gauche/left
     if(boundaryConditions.left==BoundaryType::Neumann){
+		heightNext[0]=height[0];
+	}
+	if(boundaryConditions.left==BoundaryType::Dirichlet){
 		for(auto& y_:heightNext[0]){
 			y_=0.0;
 		}
-	}
-	if(boundaryConditions.left==BoundaryType::Dirichlet){
-		heightNext[0]=height[0];
 	}
 	if(boundaryConditions.left==BoundaryType::Forcing){
 		for(auto& y_ : heightNext[0]){
 				y_=A*sin(omega*(time+dt));
 		}
+		cout<<"A"<<endl;
 	}
 	
-	///bord droite
+	///bord droite/right
     if(boundaryConditions.right==BoundaryType::Neumann){
-		for(auto& y_ : heightNext.back())
-		{
-			y_=0.0;
-		}
+		heightNext.back()=height.back();
+		cout<<"B"<<endl;
 		
 	}
 	if(boundaryConditions.right==BoundaryType::Dirichlet){
-		heightNext.back()=height.back();
+		for(auto& y_ : heightNext.back())
+		{
+			y_=0.0;
+		}		
 	}
 	if(boundaryConditions.right==BoundaryType::Exit){
 		unsigned int x_ = heightNext[0].size()-1;
@@ -313,25 +315,28 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
     
     ///bord bas
     if(boundaryConditions.down==BoundaryType::Neumann){
-		for(unsigned int i(0); i<heightNext[0].size();i++){
-			heightNext[0][i]=0.0;
-		}
-	}
-	if(boundaryConditions.down==BoundaryType::Dirichlet){
 		for(unsigned int i(0); i<heightNext.size();i++){
 			heightNext[0][i]=heightNext[0][i];
 		}
+		cout<<"C"<<endl;
+	}
+	if(boundaryConditions.down==BoundaryType::Dirichlet){
+		for(unsigned int i(0); i<heightNext[0].size();i++){
+			heightNext[0][i]=0.0;
+		}		
 		
 	}
     ///bord haut
     if(boundaryConditions.up==BoundaryType::Neumann){
-		for(unsigned int i(0); i<heightNext[0].size();i++){
-			heightNext.back()[i]=0.0;
+		for(unsigned int i(0); i<heightNext.back().size();i++){
+			heightNext[0][i]=heightNext.back()[i];
 		}
+		cout<<"D"<<endl;
+		
 	}
 	if(boundaryConditions.up==BoundaryType::Dirichlet){
-		for(unsigned int i(0); i<heightNext.size();i++){
-			heightNext[0][i]=heightNext.back()[i];
+		for(unsigned int i(0); i<heightNext[0].size();i++){
+			heightNext.back()[i]=0.0;
 		}
 	}
 }
@@ -420,8 +425,8 @@ main(int argc, char* argv[])
     // TODO: Implement finite difference grid
     vector<double> x(Nx);
     vector<double> y(Ny);
-    for (unsigned int i = 0; i < x.size(); ++i) x[i] = i;
-    for (unsigned int j = 0; j < y.size(); ++j) y[j] = j;
+    for (unsigned int i = 0; i < x.size(); ++i) x[i] = i*Lx/(x.size()-1);
+    for (unsigned int j = 0; j < y.size(); ++j) y[j] = j*Ly/(y.size()-1);
 
     // The 'u2FunctionGenerator' returns a function that can depend on the different initial
     // conditions. After this point you can use 'u2' as a normal function, e.g. `u2(x[i], y[j])`
@@ -433,7 +438,7 @@ main(int argc, char* argv[])
 
     vector<vector<double>> height(Nx, vector<double>(Ny));
     vector<vector<double>> heightPrev(Nx, vector<double>(Ny));
-    cout<<"DEBUG:: avant Initial condition"<<endl;
+    //cout<<"DEBUG:: avant Initial condition"<<endl;
     setInitialConditions(height,
                          heightPrev,
                          initialCondition,
@@ -453,21 +458,21 @@ main(int argc, char* argv[])
                          eigenmodeN);
     vector<vector<double>> heightNext(Nx, vector<double>(Ny));
 
-	cout<<"DEBUG:: Finit Initial condition"<<endl;
+	//cout<<"DEBUG:: Finit Initial condition"<<endl;
     // Temporal loop
     const int frameCount = endTime / dt;
     cout << "2D WAVE SIMULATOR | " << inputPath << " | dt=" << setprecision(2) << dt
          << " | frames=" << frameCount << endl;
     int printCounter = 0;
-    cout<<"DEBUG:: avant d'entre dans la boucle"<<endl;
+    //cout<<"DEBUG:: avant d'entre dans la boucle"<<endl;
     for (int frame = 1; frame <= frameCount; ++frame) {
         double time = frame * dt;
 		
-		cout<<"DEBUG:: avant advanceHeightField"<<endl;
+		//cout<<"DEBUG:: avant advanceHeightField"<<endl;
         advanceHeightField(time, dt, heightNext, height, heightPrev, x, y, u2);
-        cout<<"DEBUG:: après advanceHeightField"<<endl;
+        ///cout<<"DEBUG:: après advanceHeightField"<<endl;
         setBoundaryConditions(boundaryConditions, time, dt, heightNext, height, x, y, A, omega, u2);
-		cout<<"DEBUG:: apres setBoundaryConditions"<<endl;
+		///cout<<"DEBUG:: apres setBoundaryConditions"<<endl;
 		
         // Rotate the buffers
         std::swap(heightPrev, height);
@@ -484,11 +489,11 @@ main(int argc, char* argv[])
                           << std::endl;
             }
         }
-		cout<<"DEBUG:: avant writeData"<<endl;
+		//cout<<"DEBUG:: avant writeData"<<endl;
         writeData(framepath, time, x, y, height);
-        cout<<"DEBUG:: apres writeData"<<endl;
+        //cout<<"DEBUG:: apres writeData"<<endl;
     }
-	cout<<"DEBUG:: main return 0"<<endl;
+	//cout<<"DEBUG:: main return 0"<<endl;
     return 0;
 }
 
