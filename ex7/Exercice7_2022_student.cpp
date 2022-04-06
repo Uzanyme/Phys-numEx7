@@ -326,7 +326,7 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
     ///bord bas
     if(boundaryConditions.down==BoundaryType::Neumann){
 		for(unsigned int i(0); i<heightNext.size();i++){
-			heightNext[0][i]=heightNext[1][i];
+			heightNext[i][0]=heightNext[i][1];
 		}
 		//cout<<"C"<<endl;
 	}
@@ -338,8 +338,8 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
 	}
     ///bord haut
     if(boundaryConditions.up==BoundaryType::Neumann){
-		for(unsigned int i(0); i<heightNext.back().size();i++){
-			heightNext[0][i]=heightNext[1][i];
+		for(unsigned int i(0); i<heightNext.size();i++){
+			heightNext[i][heightNext.back().size()-1]=heightNext[i][heightNext.back().size()-2];
 		}
 		//cout<<"D"<<endl;
 		
