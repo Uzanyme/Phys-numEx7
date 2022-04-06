@@ -256,7 +256,7 @@ setInitialConditions(vector<vector<double>>& height,
             break;
         case InitialCondition::Eigenmode:
 			for(size_t i(0); i<height.size();++i){
-                for(size_t j(0); j<height[i].size();++i){
+                for(size_t j(0); j<height[i].size();++j){
                     double km(eigenmodeM*M_PI/Lx);
                     double kn(eigenmodeN*M_PI/Ly);
                     height[i][j]=eigenmodeAmplitude*cos(km*x[i]+kn*y[j]);
@@ -319,7 +319,9 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
 		for(unsigned int i(0);i<heightNext.back().size()-1;i++){
 			double hx = x[i+1]-x[i];
 			//heightNext.back()[i]=height.back()[i]	+sqrt(u2(x_,i))*dt/hx*(height[x_][i]-height[x_+1][i]);
-			heightNext.back()[i]=height.back()[i]	+sqrt(u2(x_,i))*dt/hx*(height[x_-1][i]-height.back()[i]);
+			///heightNext.back()[i]=height.back()[i]	+sqrt(u2(x_,i))*dt/hx*(heightNext[heightNext.size()-2][i]-heightNext.back()[i]);
+			///reddit
+			heightNext.back()[i]=height.back()[i]	-sqrt(u2(x_,i))*dt/hx*(heightNext[heightNext.size()-2][i]-heightNext[heightNext.size()-1][i]);
 		}
 	}
     
@@ -332,7 +334,7 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
 	}
 	if(boundaryConditions.down==BoundaryType::Dirichlet){
 		for(unsigned int i(0); i<heightNext[0].size();i++){
-			//heightNext[0][i]=0.0;
+			heightNext[i][0]=0.0;
 		}		
 		
 	}
@@ -346,7 +348,7 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
 	}
 	if(boundaryConditions.up==BoundaryType::Dirichlet){
 		for(unsigned int i(0); i<heightNext[0].size();i++){
-			heightNext.back()[i]=0.0;
+			heightNext[i].back()=0.0;
 		}
 	}
 }
