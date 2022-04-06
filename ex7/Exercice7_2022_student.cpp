@@ -255,14 +255,6 @@ setInitialConditions(vector<vector<double>>& height,
             }
             break;
         case InitialCondition::Eigenmode:
-		for(size_t i(0); i<height.size();++i){
-			for(size_t j(0); j<height[i].size();++i){
-				double km(eigenmodeM*M_PI/Lx);
-				double kn(eigenmodeN*M_PI/Ly);
-				eigenmodeAmplitude*cos(km*x[i]+kn*y[j]);
-				heightPrev[i][j]=height[i][j]*cos(-dt*sqrt(pow(eigenmodeM*M_PI/Lx,2.0)+pow(eigenmodeN*M_PI/Ly,2.0))*sqrt(u2(x[i],y[j])));
-			}
-		}
         default:
             height = vector<vector<double>>(x.size(), vector<double>(y.size()));
             heightPrev = height;
@@ -297,13 +289,13 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
 		for(auto& y_ : heightNext[0]){
 				y_=A*sin(omega*(time+dt));
 		}
-		cout<<"A"<<endl;
+		//cout<<"A"<<endl;
 	}
 	
 	///bord droite/right
     if(boundaryConditions.right==BoundaryType::Neumann){
 		heightNext.back()=height.back();
-		cout<<"B"<<endl;
+		//cout<<"B"<<endl;
 		
 	}
 	if(boundaryConditions.right==BoundaryType::Dirichlet){
@@ -326,11 +318,11 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
 		for(unsigned int i(0); i<heightNext.size();i++){
 			heightNext[0][i]=heightNext[0][i];
 		}
-		cout<<"C"<<endl;
+		//cout<<"C"<<endl;
 	}
 	if(boundaryConditions.down==BoundaryType::Dirichlet){
 		for(unsigned int i(0); i<heightNext[0].size();i++){
-			heightNext[0][i]=0.0;
+			//heightNext[0][i]=0.0;
 		}		
 		
 	}
@@ -339,7 +331,7 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
 		for(unsigned int i(0); i<heightNext.back().size();i++){
 			heightNext[0][i]=heightNext.back()[i];
 		}
-		cout<<"D"<<endl;
+		//cout<<"D"<<endl;
 		
 	}
 	if(boundaryConditions.up==BoundaryType::Dirichlet){
@@ -363,11 +355,11 @@ advanceHeightField(const double time,
     for (unsigned int i = 1; i < x.size() - 1; ++i) {
         for (unsigned int j = 1; j < y.size() - 1; ++j) {
              // heightNext[i][j] = ...
-             double hx2=pow(x[i+1]-x[i],2.0);
-             double hy2=pow(y[i+1]-y[i],2.0);
+             double hx2=pow(x[1]-x[0],2.0);
+             double hy2=pow(y[1]-y[0],2.0);
              heightNext[i][j] = dt*dt*(((u2(x[i+1],y[j])-u2(x[i-1],y[j]))*(height[i+1][j]-height[i-1][j]))/(4.0*hx2)
              + ((u2(x[i],y[j+1])-u2(x[i],y[j-1]))*(height[i][j+1]-height[i][j-1]))/(4.0*hy2)+ 
-             u2(x[i],y[j])*((height[i+1][j]-2*height[i][j]+height[i-1][j])/(hx2)+(height[i][j+1]-2*height[i][j]+height[i][j-1])/(hy2))) 
+             u2(x[i],y[j])*((height[i+1][j]-2*height[i][j]+height[i-1][j])/(hx2)+(height[i][j+1]-2.0*height[i][j]+height[i][j-1])/(hy2))) 
              +2.0*height[i][j]-heightPrev[i][j];
         }
     }
@@ -473,6 +465,8 @@ main(int argc, char* argv[])
          << " | frames=" << frameCount << endl;
     int printCounter = 0;
     //cout<<"DEBUG:: avant d'entre dans la boucle"<<endl;
+    
+    //writeData(getFilepathForFrame(0, outputFilePath), 0.0, x, y, height);
     for (int frame = 1; frame <= frameCount; ++frame) {
         double time = frame * dt;
 		
