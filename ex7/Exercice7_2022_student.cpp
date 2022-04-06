@@ -260,7 +260,7 @@ setInitialConditions(vector<vector<double>>& height,
 				double km(eigenmodeM*M_PI/Lx);
 				double kn(eigenmodeN*M_PI/Ly);
 				eigenmodeAmplitude*cos(km*x[i]+kn*y[j]);
-				heightPrev[i][j]=height[i][j]*cos(-dt*sqrt(pow(EigenmodeM*M_PI/Lx,2.0)+pow(EigenmodeN*M_PI/Ly,2.0))*sqrt(u2(x[i],y[j])));
+				heightPrev[i][j]=height[i][j]*cos(-dt*sqrt(pow(eigenmodeM*M_PI/Lx,2.0)+pow(eigenmodeN*M_PI/Ly,2.0))*sqrt(u2(x[i],y[j])));
 			}
 		}
         default:
