@@ -35,9 +35,25 @@ if animate
         xlabel('x [m]')
         ylabel('y [m]')
         title('H(x,y) [m]')
-        colorbar
+        h = colorbar;
+        set(h, 'ylim', [-2 2])
+        h
         axis equal
         axis([min(X) max(X) min(Y) max(Y)])
+        disp(ii)
+        pause(.01)
+    end
+end
+
+pause(.5)
+
+if animate
+    figure
+    for ii=1:ntime
+        surf(X,Y,H(:,:,ii))
+        axis equal
+        axis([min(X) max(X) min(Y) max(Y) -1.5 1.5])
+        disp(ii)
         pause(.01)
     end
 end
