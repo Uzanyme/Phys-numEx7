@@ -255,6 +255,15 @@ setInitialConditions(vector<vector<double>>& height,
             }
             break;
         case InitialCondition::Eigenmode:
+			for(size_t i(0); i<height.size();++i){
+                for(size_t j(0); j<height[i].size();++i){
+                    double km(eigenmodeM*M_PI/Lx);
+                    double kn(eigenmodeN*M_PI/Ly);
+                    height[i][j]=eigenmodeAmplitude*cos(km*x[i]+kn*y[j]);
+                    heightPrev[i][j]=height[i][j]*cos(-dt*sqrt(pow(eigenmodeM*M_PI/Lx,2.0)+pow(eigenmodeN*M_PI/Ly,2.0))*sqrt(u2(x[i],y[j])));
+                }
+            }
+            break;
         default:
             height = vector<vector<double>>(x.size(), vector<double>(y.size()));
             heightPrev = height;
@@ -281,27 +290,28 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
 		heightNext[0]=height[0];
 	}
 	if(boundaryConditions.left==BoundaryType::Dirichlet){
-		for(auto& y_:heightNext[0]){
-			y_=0.0;
+		for(auto& f:heightNext[0]){
+			f=0.0;
 		}
 	}
 	if(boundaryConditions.left==BoundaryType::Forcing){
-		for(auto& y_ : heightNext[0]){
-				y_=A*sin(omega*(time+dt));
+		for(auto& f : heightNext[0]){
+				f=A*sin(omega*(time+dt));
+				//cout<<"DEBUG:: Forcing condition actived : f = "<<f<<endl;
 		}
 		//cout<<"A"<<endl;
 	}
 	
 	///bord droite/right
     if(boundaryConditions.right==BoundaryType::Neumann){
-		heightNext.back()=height.back();
+		heightNext.back()=heightNext[heightNext.size()-2];
 		//cout<<"B"<<endl;
 		
 	}
 	if(boundaryConditions.right==BoundaryType::Dirichlet){
-		for(auto& y_ : heightNext.back())
+		for(auto& f : heightNext.back())
 		{
-			y_=0.0;
+			f=0.0;
 		}		
 	}
 	if(boundaryConditions.right==BoundaryType::Exit){
@@ -316,7 +326,7 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
     ///bord bas
     if(boundaryConditions.down==BoundaryType::Neumann){
 		for(unsigned int i(0); i<heightNext.size();i++){
-			heightNext[0][i]=heightNext[0][i];
+			heightNext[0][i]=heightNext[1][i];
 		}
 		//cout<<"C"<<endl;
 	}
@@ -329,7 +339,7 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
     ///bord haut
     if(boundaryConditions.up==BoundaryType::Neumann){
 		for(unsigned int i(0); i<heightNext.back().size();i++){
-			heightNext[0][i]=heightNext.back()[i];
+			heightNext[0][i]=heightNext[1][i];
 		}
 		//cout<<"D"<<endl;
 		
