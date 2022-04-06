@@ -255,6 +255,14 @@ setInitialConditions(vector<vector<double>>& height,
             }
             break;
         case InitialCondition::Eigenmode:
+		for(size_t i(0); i<height.size();++i){
+			for(size_t j(0); j<height[i].size();++i){
+				double km(EigenmodeM*M_PI/Lx);
+				double kn(EigenmodeN*M_PI/Ly);
+				f0*cos(km*x[i]+kn*y[j]);
+				heightPrev[i][j]=height[i][j]*cos(-dt*sqrt(pow(EigenmodeM*M_PI/Lx,2.0)+pow(EigenmodeN*M_PI/Ly,2.0))*sqrt(u2(x[i],y[j])));
+			}
+		}
         default:
             height = vector<vector<double>>(x.size(), vector<double>(y.size()));
             heightPrev = height;
