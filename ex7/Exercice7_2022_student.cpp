@@ -287,7 +287,7 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
     
     ///bord gauche/left
     if(boundaryConditions.left==BoundaryType::Neumann){
-		heightNext[0]=height[0];
+		heightNext[0]=heightNext[1];
 	}
 	if(boundaryConditions.left==BoundaryType::Dirichlet){
 		for(auto& f:heightNext[0]){
@@ -315,20 +315,31 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
 		}		
 	}
 	if(boundaryConditions.right==BoundaryType::Exit){
-		unsigned int x_ = heightNext[0].size()-1;
+		double hx = x[1]-x[0];
 		for(unsigned int i(0);i<heightNext.back().size()-1;i++){
-			double hx = x[i+1]-x[i];
 			//heightNext.back()[i]=height.back()[i]	+sqrt(u2(x_,i))*dt/hx*(height[x_][i]-height[x_+1][i]);
 			///heightNext.back()[i]=height.back()[i]	+sqrt(u2(x_,i))*dt/hx*(heightNext[heightNext.size()-2][i]-heightNext.back()[i]);
 			///reddit
-			heightNext.back()[i]=height.back()[i]	-sqrt(u2(x_,i))*dt/hx*(heightNext[heightNext.size()-2][i]-heightNext[heightNext.size()-1][i]);
-		}
+			heightNext.back()[i]=height.back()[i] -sqrt(u2(x.back(),y[i]))*dt/hx*(height[height.size()-1][i]-height[height.size()-2][i]);
+		}	
 	}
     
     ///bord bas
     if(boundaryConditions.down==BoundaryType::Neumann){
 		for(unsigned int i(0); i<heightNext.size();i++){
 			heightNext[i][0]=heightNext[i][1];
+		}
+		if(boundaryConditions.left==BoundaryType::Neumann){
+			heightNext[0][0]=heightNext[1][1];
+			heightNext[1][0]=heightNext[1][1];
+			heightNext[0][1]=heightNext[1][1];
+		}
+		
+		if(boundaryConditions.right==BoundaryType::Neumann)
+		{
+			heightNext[heightNext.size()-1][0]=heightNext[heightNext.size()-2][1];
+			heightNext[heightNext.size()-2][0]=heightNext[heightNext.size()-2][1];
+			heightNext[heightNext.size()-1][1]=heightNext[heightNext.size()-2][1];
 		}
 		//cout<<"C"<<endl;
 	}
@@ -342,6 +353,18 @@ setBoundaryConditions(const BoundaryConditions boundaryConditions,
     if(boundaryConditions.up==BoundaryType::Neumann){
 		for(unsigned int i(0); i<heightNext.size();i++){
 			heightNext[i][heightNext.back().size()-1]=heightNext[i][heightNext.back().size()-2];
+		}
+		if(boundaryConditions.left==BoundaryType::Neumann){
+			heightNext[0][heightNext.back().size()-1]=heightNext[1][heightNext.back().size()-2];
+			heightNext[1][heightNext.back().size()-1]=heightNext[1][heightNext.back().size()-2];
+			heightNext[0][heightNext.back().size()-2]=heightNext[1][heightNext.back().size()-2];
+		}
+		
+		if(boundaryConditions.right==BoundaryType::Neumann)
+		{
+			heightNext[heightNext.size()-1][heightNext.back().size()-1]=heightNext[heightNext.size()-2][heightNext.back().size()-2];
+			heightNext[heightNext.size()-2][heightNext.back().size()-1]=heightNext[heightNext.size()-2][heightNext.back().size()-2];
+			heightNext[heightNext.size()-1][heightNext.back().size()-2]=heightNext[heightNext.size()-2][heightNext.back().size()-2];
 		}
 		//cout<<"D"<<endl;
 		
